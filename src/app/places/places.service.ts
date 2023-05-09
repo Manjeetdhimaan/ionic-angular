@@ -24,8 +24,8 @@ export class PlacesService {
     ),
     new Place(
       'p3',
-      'Manhattan Mansion',
-      'In the heart of New York City',
+      'Mohali',
+      'In the heart of Mohali',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiQWFazJlUneMkorAGoX4LJZFsirc2gRTBEQ&usqp=CAU',
       149.99
     )
