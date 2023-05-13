@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
 
 import { AuthService } from './auth.service';
 
@@ -9,6 +10,8 @@ import { AuthService } from './auth.service';
   styleUrls: ['./auth.page.scss'],
 })
 export class AuthPage implements OnInit {
+
+  isLoginMode = true;
 
   constructor( private authService: AuthService, private router: Router ) { }
 
@@ -22,6 +25,14 @@ export class AuthPage implements OnInit {
 
   onLogout() {
     this.authService.logout();
+  }
+
+  onSubmit(form: NgForm) {
+    console.log(form.value);
+  }
+
+  onSwitchAuthMode() {
+    this.isLoginMode = !this.isLoginMode;
   }
 
 }

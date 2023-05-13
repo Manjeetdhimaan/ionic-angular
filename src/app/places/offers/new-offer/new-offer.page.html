@@ -4,15 +4,58 @@
       <ion-back-button defaultHref="/places/tabs/offers"></ion-back-button>
     </ion-buttons>
     <ion-title>New Offer</ion-title>
+    <ion-buttons slot="primary" (click)="onCreateOffer()">
+      <ion-button [disabled]="!form.valid">
+        <ion-icon name="checkmark" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-grid>
-    <ion-row>
-      <ion-col>
-        Manjeet Singh
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <form [formGroup]="form">
+    <ion-grid>
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-input formControlName="title" type="text" label="Title" labelPlacement="floating" autocorrect autocomplete
+              autocapitalize></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-textarea formControlName="description" rows="3" label="Short Description" labelPlacement="floating"></ion-textarea>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-input formControlName="price" type="number" label="Price" labelPlacement="floating"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="3" offsetSm="3">
+          <ion-item>
+            <ion-datetime formControlName="dateFrom" min="2023-01-01" max="2025-12-32">
+              <span slot="title">Available from</span>
+            </ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col sizeSm="3">
+          <ion-item>
+            <ion-datetime formControlName="dateTo" min="2023-01-02" max="2025-12-32">
+              <span slot="title">Available to</span>
+            </ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 </ion-content>

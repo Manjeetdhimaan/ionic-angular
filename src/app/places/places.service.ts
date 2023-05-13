@@ -13,21 +13,27 @@ export class PlacesService {
       'Manhattan Mansion',
       'In the heart of New York City',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiQWFazJlUneMkorAGoX4LJZFsirc2gRTBEQ&usqp=CAU',
-      149.99
+      149.99,
+      new Date('2023-01-01'),
+      new Date('2025-12-31')
     ),
     new Place(
       'p2',
       'Patiala',
       'In the heart of Punjab',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiQWFazJlUneMkorAGoX4LJZFsirc2gRTBEQ&usqp=CAU',
-      149.99
+      149.99,
+      new Date('2023-01-01'),
+      new Date('2025-12-31')
     ),
     new Place(
       'p3',
       'Mohali',
       'In the heart of Mohali',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiQWFazJlUneMkorAGoX4LJZFsirc2gRTBEQ&usqp=CAU',
-      149.99
+      149.99,
+      new Date('2023-01-01'),
+      new Date('2025-12-31')
     )
   ];
 
