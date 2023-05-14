@@ -12,6 +12,7 @@ import { IonItemSliding } from '@ionic/angular';
 })
 export class OffersPage implements OnInit {
   offers: Place[];
+  isLoading = false;
 
   constructor( private placesService: PlacesService, private router: Router ) { }
 
@@ -21,9 +22,14 @@ export class OffersPage implements OnInit {
     });
   }
 
-  // ionViewDidEnter() {
-  //   this.offers = this.placesService.places;
-  // }
+  ionViewWillEnter() {
+    this.isLoading = true;
+    this.placesService.fetchPlaces().subscribe(() => {
+      this.isLoading = false;
+    }, err => {
+      this.isLoading = false;
+    });
+  }
 
   onEdit(offerId: string, slidingItem: IonItemSliding) {
     slidingItem.close();

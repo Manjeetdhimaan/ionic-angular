@@ -16,6 +16,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class PlaceDetailPage implements OnInit {
   place: Place | any;
   isBookable = false;
+  isLoading = false;
   constructor(private activateRoute: ActivatedRoute, private navCtrl: NavController, private placesService: PlacesService, private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private bookingService: BookingService, private loadingCtrl: LoadingController, private authService: AuthService) { }
 
   ngOnInit() {
@@ -24,9 +25,13 @@ export class PlaceDetailPage implements OnInit {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
+      this.isLoading = true;
       this.placesService.getPlace(params['placeId']).subscribe(place => {
         this.place = place;
         this.isBookable = this.place.userId !== this.authService.userId;
+        this.isLoading = false;
+      }, err => {
+        this.isLoading = false;
       })
     });
   }
@@ -76,10 +81,12 @@ export class PlaceDetailPage implements OnInit {
           }).then(loadingEl => {
             loadingEl.present();
             const data = resultData.data.bookingData;
-          this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, data.firstName, data.lastName, data.guestNumber, data.startDate, data.startDate).subscribe(() => {
-            loadingEl.dismiss();
-            this.navCtrl.navigateBack('/bookings');
-          });
+            this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, data.firstName, data.lastName, data.guestNumber, data.startDate, data.startDate).subscribe(() => {
+              loadingEl.dismiss();
+              this.navCtrl.navigateBack('/bookings');
+            }, err => {
+              loadingEl.dismiss();
+            });
           });
           console.log('BOOKED!');
         }

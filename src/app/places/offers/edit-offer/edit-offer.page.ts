@@ -14,6 +14,8 @@ import { Place } from '../../place.model';
 export class EditOfferPage implements OnInit {
   place: Place | any;
   form: FormGroup;
+  placedId: string;
+  isLoading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,9 +31,10 @@ export class EditOfferPage implements OnInit {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
+      this.placedId = param['placeId']
+      this.isLoading = true;
       this.placesService.getPlace(param['placeId']).subscribe(place => {
         this.place = place;
-
         this.form = new FormGroup({
           title: new FormControl(this.place.title, {
             updateOn: 'blur',
@@ -42,6 +45,9 @@ export class EditOfferPage implements OnInit {
             validators: [Validators.required, Validators.maxLength(180)]
           })
         });
+        this.isLoading = false;
+      }, err => {
+        this.isLoading = false;
       });
     });
   }

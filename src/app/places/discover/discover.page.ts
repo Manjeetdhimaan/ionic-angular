@@ -14,6 +14,7 @@ export class DiscoverPage implements OnInit {
   loadedPlaces: Place[];
   listedLoadedPlaces: Place[];
   relevantPlaces: Place[];
+  isLoading = false;
 
 
   constructor( private placesService: PlacesService, private authService: AuthService ) { }
@@ -36,5 +37,14 @@ export class DiscoverPage implements OnInit {
       );
       this.listedLoadedPlaces = this.relevantPlaces.slice(1);
     }
+  }
+
+  ionViewWillEnter() {
+    this.isLoading = true;
+    this.placesService.fetchPlaces().subscribe(() => {
+      this.isLoading = false;
+    }, err => {
+      this.isLoading = false;
+    });
   }
 }

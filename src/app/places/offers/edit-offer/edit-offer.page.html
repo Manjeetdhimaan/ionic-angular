@@ -1,10 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons>
-      <ion-back-button defaultHref="/places/tabs/offers"></ion-back-button>
+      <ion-back-button [defaultHref]="'/places/tabs/offers/+'+placedId"></ion-back-button>
     </ion-buttons>
     <ion-title>Edit Offer</ion-title>
-    <ion-buttons slot="primary">
+    <ion-buttons slot="primary" *ngIf="place && !isLoading">
       <ion-button (click)="onUpdateOffer()" [disabled]="!form.valid">
         <ion-icon name="checkmark" slot="icon-only"></ion-icon>
       </ion-button>
@@ -13,7 +13,16 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <form [formGroup]="form">
+  <ion-grid *ngIf="isLoading">
+    <ion-row>
+      <ion-col size-sm="6" offset-sm="3">
+       <div class="ion-text-center">
+        <ion-spinner></ion-spinner>
+       </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <form [formGroup]="form" *ngIf="place && !isLoading">
     <ion-grid>
       <ion-row>
         <ion-col size-sm="6" offset-sm="3">
