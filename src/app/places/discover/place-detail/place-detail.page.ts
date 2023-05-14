@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { ActionSheetController, ModalController, NavController } from '@ionic/angular';
+import { ActionSheetController, LoadingController, ModalController, NavController } from '@ionic/angular';
 
 import { CreateBookingComponent } from 'src/app/bookings/create-booking/create-booking.component';
 import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
+import { BookingService } from 'src/app/bookings/booking.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -13,7 +15,8 @@ import { PlacesService } from '../../places.service';
 })
 export class PlaceDetailPage implements OnInit {
   place: Place | any;
-  constructor(private activateRoute: ActivatedRoute, private navCtrl: NavController, private placesService: PlacesService, private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController) { }
+  isBookable = false;
+  constructor(private activateRoute: ActivatedRoute, private navCtrl: NavController, private placesService: PlacesService, private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private bookingService: BookingService, private loadingCtrl: LoadingController, private authService: AuthService) { }
 
   ngOnInit() {
     this.activateRoute.params.subscribe((params: Params) => {
@@ -21,7 +24,10 @@ export class PlaceDetailPage implements OnInit {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
-      this.place = this.placesService.getPlace(params['placeId']);
+      this.placesService.getPlace(params['placeId']).subscribe(place => {
+        this.place = place;
+        this.isBookable = this.place.userId !== this.authService.userId;
+      })
     });
   }
 
@@ -54,7 +60,6 @@ export class PlaceDetailPage implements OnInit {
   }
 
   openBookingModal(mode: 'select' | 'random') {
-    console.log(mode);
     this.modalCtrl
       .create({
         component: CreateBookingComponent,
@@ -65,8 +70,17 @@ export class PlaceDetailPage implements OnInit {
         return modalEl.onDidDismiss();
       })
       .then(resultData => {
-        console.log(resultData.data, resultData.role);
         if (resultData.role === 'confirm') {
+          this.loadingCtrl.create({
+            message: 'Booking place...'
+          }).then(loadingEl => {
+            loadingEl.present();
+            const data = resultData.data.bookingData;
+          this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, data.firstName, data.lastName, data.guestNumber, data.startDate, data.startDate).subscribe(() => {
+            loadingEl.dismiss();
+            this.navCtrl.navigateBack('/bookings');
+          });
+          });
           console.log('BOOKED!');
         }
       });

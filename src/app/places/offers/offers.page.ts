@@ -16,8 +16,14 @@ export class OffersPage implements OnInit {
   constructor( private placesService: PlacesService, private router: Router ) { }
 
   ngOnInit() {
-    this.offers = this.placesService.places;
+    this.placesService.places.subscribe(places => {
+      this.offers = places;
+    });
   }
+
+  // ionViewDidEnter() {
+  //   this.offers = this.placesService.places;
+  // }
 
   onEdit(offerId: string, slidingItem: IonItemSliding) {
     slidingItem.close();

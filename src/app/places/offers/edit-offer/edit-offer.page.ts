@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LoadingController, NavController } from '@ionic/angular';
 
 import { PlacesService } from '../../places.service';
 import { Place } from '../../place.model';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-edit-offer',
@@ -18,7 +18,9 @@ export class EditOfferPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private placesService: PlacesService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private loadingCtrl: LoadingController,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -27,26 +29,33 @@ export class EditOfferPage implements OnInit {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
-      this.place = this.placesService.getPlace(param['placeId']);
+      this.placesService.getPlace(param['placeId']).subscribe(place => {
+        this.place = place;
 
-      this.form = new FormGroup({
-        title: new FormControl(this.place.title, {
-          updateOn: 'blur',
-          validators: [Validators.required]
-        }),
-        description: new FormControl(this.place.description, {
-          updateOn: 'blur',
-          validators: [Validators.required, Validators.maxLength(180)]
-        })
+        this.form = new FormGroup({
+          title: new FormControl(this.place.title, {
+            updateOn: 'blur',
+            validators: [Validators.required]
+          }),
+          description: new FormControl(this.place.description, {
+            updateOn: 'blur',
+            validators: [Validators.required, Validators.maxLength(180)]
+          })
+        });
       });
     });
   }
 
   onUpdateOffer() {
-    if (!this.form.valid) {
-      return;
-    }
-    console.log(this.form);
+    if (!this.form.valid) return;
+    this.loadingCtrl.create({
+      message: 'Updating offer...'
+    }).then(loadingEl => {
+      loadingEl.present();
+      this.placesService.updatePlace(this.place.id, this.form.value.title, this.form.value.description).subscribe(() => {
+        loadingEl.dismiss();
+        this.router.navigateByUrl('/places/tabs/offers');
+      });
+    })
   }
-
 }
