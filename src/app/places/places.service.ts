@@ -4,6 +4,7 @@ import { BehaviorSubject, map, of, switchMap, take, tap } from 'rxjs';
 
 import { Place } from './place.model';
 import { AuthService } from '../auth/auth.service';
+import { PlaceLocation } from './location.model';
 
 interface PlaceData {
   availableFrom: string;
@@ -13,6 +14,7 @@ interface PlaceData {
   price: number;
   title: string;
   userId: string;
+  location: PlaceLocation;
 }
 
 // new Place(
@@ -46,7 +48,7 @@ export class PlacesService {
         const places = [];
         for (const key in resData) {
           if (resData.hasOwnProperty(key)) {
-            places.push(new Place(key, resData[key].title, resData[key].description, resData[key].imageUrl, resData[key].price, new Date(resData[key].availableFrom), new Date(resData[key].availableTo), resData[key].userId));
+            places.push(new Place(key, resData[key].title, resData[key].description, resData[key].imageUrl, resData[key].price, new Date(resData[key].availableFrom), new Date(resData[key].availableTo), resData[key].userId, resData[key].location));
           }
         }
         return places;
@@ -68,7 +70,8 @@ export class PlacesService {
           resData.price,
           new Date(resData.availableFrom),
           new Date(resData.availableTo),
-          resData.userId
+          resData.userId,
+          resData.location
         );
       })
     );
@@ -77,9 +80,9 @@ export class PlacesService {
     // }))
   }
 
-  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date) {
+  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date, location: PlaceLocation) {
     let generatedId: string;
-    const newPlace = new Place(Math.random().toString(), title, description, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiQWFazJlUneMkorAGoX4LJZFsirc2gRTBEQ&usqp=CAU', price, dateFrom, dateTo, this.authService.userId);
+    const newPlace = new Place(Math.random().toString(), title, description, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiQWFazJlUneMkorAGoX4LJZFsirc2gRTBEQ&usqp=CAU', price, dateFrom, dateTo, this.authService.userId, location);
 
     return this.http.post<{ name: string }>('https://ionic-angular-manjeet-default-rtdb.firebaseio.com/offered-places.json', { ...newPlace, id: null }).pipe(
       switchMap(resData => {
@@ -120,7 +123,8 @@ export class PlacesService {
           oldPlace.price,
           oldPlace.availableFrom,
           oldPlace.availableFrom,
-          oldPlace.userId
+          oldPlace.userId,
+          oldPlace.location
         );
         return this.http.put(
           `https://ionic-angular-manjeet-default-rtdb.firebaseio.com/offered-places/${placeId}.json`,
