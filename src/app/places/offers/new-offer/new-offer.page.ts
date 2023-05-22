@@ -76,4 +76,8 @@ export class NewOfferPage implements OnInit {
           });
       });
   }
+
+  onImagePicked(imageUrl: string) {
+    console.log(imageUrl)
+  }
 }
