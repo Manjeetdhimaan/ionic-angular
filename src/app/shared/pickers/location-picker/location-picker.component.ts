@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { of, map, switchMap } from 'rxjs';
@@ -18,6 +18,8 @@ export class LocationPickerComponent implements OnInit {
   selectedLocationImage: string;
   isLoading = false;
   @Output() locationPick = new EventEmitter<PlaceLocation>();
+  @Input() showPreview = false;
+
   constructor(private modalCtrl: ModalController, private http: HttpClient, private actionSheetCtrl: ActionSheetController, private alertCtrl: AlertController) { }
 
   ngOnInit() { }

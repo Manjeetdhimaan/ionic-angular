@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, Input } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
@@ -11,8 +11,9 @@ import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
 export class ImagePickerComponent implements OnInit {
   selectedImage: string;
   usePicker = false;
-  @Output() imagePick = new EventEmitter<string>();
+  @Output() imagePick = new EventEmitter<string | File>();
   @ViewChild('filePicker') filePicker: ElementRef<HTMLInputElement>;
+  @Input() showPreview = false;
 
   constructor(private platform: Platform) { }
 
@@ -41,18 +42,26 @@ export class ImagePickerComponent implements OnInit {
       allowEditing: true,
       resultType: CameraResultType.Uri
     }).then(image => {
-      console.dir(image);
       if (image.webPath) {
         this.selectedImage = image.webPath;
         this.imagePick.emit(image.webPath);
       }
     }).catch(err => {
+      // if(this.usePicker) this.filePicker.nativeElement.click();
       console.log(err);
       return false;
     });
   }
 
   onFileChoosen(event: Event) {
-
+    const pickedFile = (event.target as HTMLInputElement).files?.[0];
+    if(!pickedFile) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      const dataIUrl = fr.result?.toString();
+      if(dataIUrl) this.selectedImage = dataIUrl;
+      this.imagePick.emit(pickedFile);
+    }
+    fr.readAsDataURL(pickedFile);
   }
 }
